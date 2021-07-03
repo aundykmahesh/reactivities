@@ -6,10 +6,11 @@ interface Props{
     activity : Activity | undefined;
     formClose : ()=> void;
     formSubmit : (activity:Activity) => void;
+    submitting:boolean;
 }
 
 //below will assign activity to selectedactivity, so that we can use a local variable name activity
-export default function ActivityForm({activity : selectedActivity, formClose, formSubmit} : Props){
+export default function ActivityForm({activity : selectedActivity, formClose, formSubmit, submitting} : Props){
     let initialState = selectedActivity ?? {
         id : '',
         name:'',
@@ -43,11 +44,11 @@ export default function ActivityForm({activity : selectedActivity, formClose, fo
                 <Form.Input placeholder='Title' value={activity.title} name="title" onChange={handleOnChangeEvent}></Form.Input>
                 <Form.TextArea value={activity.description} name="description" onChange={handleOnChangeEvent}></Form.TextArea>
                 <Form.Input placeholder='Category' value={activity.category} name="category" onChange={handleOnChangeEvent}></Form.Input>
-                <Form.Input placeholder='Date' value={activity.date} name="date" onChange={handleOnChangeEvent}></Form.Input>
+                <Form.Input type='date' placeholder='Date' value={activity.date} name="date" onChange={handleOnChangeEvent}></Form.Input>
                 <Form.Input placeholder='City' value={activity.city} name="city" onChange={handleOnChangeEvent}></Form.Input>
                 <Form.Input placeholder='Venue' value={activity.venue} name="venue" onChange={handleOnChangeEvent}></Form.Input>
 
-                <Button floated='right' positive type='submit' content='Submit'></Button>
+                <Button floated='right' loading={submitting} positive type='submit' content='Submit'></Button>
                 <Button floated='right' onClick={formClose} type='button' content='Cancel'></Button>
             </Form>
         </Segment>
