@@ -1,14 +1,14 @@
+import { observer } from "mobx-react-lite";
 import React from "react";
 import { Button, Card, Image } from "semantic-ui-react";
-import { Activity } from "../../../models/activity";
+import LoadingComponenet from "../../../app/layout/loadingComponent";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-    activity: Activity;
-    cancelActivity: () => void;
-    formOpen : (id : string) => void;
-}
-
-export default function ActivityDetails ({ activity, cancelActivity, formOpen }: Props) {
+export default observer (function ActivityDetails () {
+    const {activitystore} = useStore();
+    const {selectedActivity: activity, openForm, cancelSelectedActivity} = activitystore;
+    ///this is just to handle case of null, loading component does nothing
+    if(!activity) return <LoadingComponenet />;
     return (
         <Card fluid>
             <Image src={`/assets/categoryImages/${activity.category}.jpg`}></Image>
@@ -17,17 +17,17 @@ export default function ActivityDetails ({ activity, cancelActivity, formOpen }:
                 <Card.Meta>
                     <span>{activity.title}</span>
                 </Card.Meta>
-                <Card.Description> ̰
+                <Card.Description> 
                     {activity.description}
-                </Card.Description> ̰
+                </Card.Description> 
 
             </Card.Content>
             <Card.Content extra>
                 <Button.Group widths='2'> 
-                    <Button onClick={() => {formOpen(activity.id)}} basic color="blue" content="Edit"></Button>
-                    <Button onClick={cancelActivity} basic color="grey" content="Cancel"></Button>
+                    <Button onClick={() => {openForm(activity.id)}} basic color="blue" content="Edit"></Button>
+                    <Button onClick={cancelSelectedActivity} basic color="grey" content="Cancel"></Button>
                 </Button.Group>
             </Card.Content>
         </Card>
     )
-}
+})
