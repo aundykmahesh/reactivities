@@ -1,7 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { Activity } from '../../models/activity';
 import agent from "../api/agent";
-import { v4 as uuid } from 'uuid';
 
 export default class ActivityStore {
     submitting = false;
@@ -28,9 +27,6 @@ export default class ActivityStore {
         this.submitting = status;
     }
 
-    // setactivities = (activity: Activity[]) => {
-    //     this.activities = activity;
-    // }
 
     setEditMode = (mode: boolean) => { this.editMode = mode; }
     setLoading = (status: boolean) => { this.loading = status; }
@@ -41,7 +37,7 @@ export default class ActivityStore {
             await agent.Activities.delete(id);
             //this.setactivities([...this.activities.filter(x => x.id !== id)]);
             this.activityRegistry.delete(id);
-            if(this.selectedActivity?.id === id) this.cancelSelectedActivity();
+            //if(this.selectedActivity?.id === id) this.cancelSelectedActivity();
             
             this.setSubmittingStatus(false);
         } catch (error) {
@@ -51,14 +47,13 @@ export default class ActivityStore {
     }
 
     loadActivities = async () => {
+        this.setLoading(true);
         try {
             await agent.Activities.list().then(response => {
                 //let activty: Activity[] = [];
 
                 response.forEach(element => {
-                    element.date = element.date.split('T')[0];
-                    //activty.push(element);
-                    this.activityRegistry.set(element.id, element);
+                   this.setActivity(element);
                 });
                 //this.setactivities(activty);
                 this.setLoading(false);
@@ -70,24 +65,42 @@ export default class ActivityStore {
         }
     }
 
-    selectActivity = (id: string) => {
-        //this.selectedActivity = this.activities.find(x => x.id === id);
-        this.selectedActivity = this.activityRegistry.get(id);
+    loadActivity = async (id:string) => {
+        try {
+            let activity = this.getActivity(id);
+            console.log(activity)
+            if (activity) {
+                this.setSelectedActivity(activity);
+                return activity;
+            } else {
+                this.setLoading(true);
+
+                let element  = await agent.Activities.details(id);
+
+                this.setActivity(element);
+                this.setSelectedActivity(element);
+
+                this.setLoading(false);
+                return element;
+            }
+        } catch (error) {
+            console.log(error);
+            this.setLoading(false);
+        }
     }
 
-    cancelSelectedActivity = () => {
-        this.selectedActivity = undefined;
+     setActivity = (element : Activity) => {
+        element.date = element.date.split('T')[0];
+        //activty.push(element);
+        this.activityRegistry.set(element.id, element);
     }
 
-    openForm = (id?: string) => {
-        id ?
-            this.selectActivity(id) :
-            this.cancelSelectedActivity();
-        this.setEditMode(true);
+    private getActivity = (id: string) => {
+        return this.activityRegistry.get(id);
     }
 
-    closeForm = () => {
-        this.setEditMode(false);
+    private setSelectedActivity = (activity: Activity | undefined)=>{
+        this.selectedActivity = activity;
     }
 
     //in the course runinaction method is used
@@ -101,7 +114,7 @@ export default class ActivityStore {
                     this.activityRegistry.set(activity.id,activity);
                 });
             } else { //create
-                activity.id = uuid();
+                //activity.id = uuid();
                 await agent.Activities.create(activity).then(() => {
                     //this.setactivities([...this.activities, activity])
                     this.activityRegistry.set(activity.id,activity);
@@ -111,7 +124,7 @@ export default class ActivityStore {
             console.log(error)
         }       
         this.setEditMode(false);
-        this.selectActivity(activity.id);
+        // this.selectActivity(activity.id);
         this.setSubmittingStatus(false);
     }
 

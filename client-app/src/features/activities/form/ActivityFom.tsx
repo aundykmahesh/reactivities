@@ -1,30 +1,43 @@
 import { observer } from "mobx-react-lite";
 import React, { ChangeEvent, useState } from "react";
+import { useEffect } from "react";
+import { NavLink, useHistory, useParams } from "react-router-dom";
 import { Button, Form, Segment } from "semantic-ui-react";
+import LoadingComponenet from "../../../app/layout/loadingComponent";
 import { useStore } from "../../../app/stores/store";
+import { v4 as uuid } from 'uuid';
+
 
 //below will assign activity to selectedactivity, so that we can use a local variable name activity
 export default observer (function ActivityForm(){
 
+    const history = useHistory();
     const {activitystore} = useStore();
-    const {selectedActivity, closeForm, submitting} = activitystore;
+    const { submitting, loading, loadActivity} = activitystore;
+    const {id} = useParams<{id:string}>();
 
-    let initialState = selectedActivity ?? {
+    let [activity, setActivity] = useState( {
         id : '',
-        name:'',
         category:'',
         description:'',
         date: '',
         city:'',
         venue:'',
         title:''
-    };
+    });
 
-    const [activity, setActivity] = useState(initialState);
+    useEffect(() => {
+        if(id) loadActivity(id).then(activity => setActivity(activity!)
+        )
+    }, [id, loadActivity])
+
+    //const [activity, setActivity] = useState(initialState);
 
     function handleSubmit(){
-        activitystore.submitForm(activity);
-        closeForm();
+        if(activity.id.length===0) {
+            activity.id = uuid();
+        }
+        activitystore.submitForm(activity).then(() => history.push(`/activities/${activity.id}`));
     }
 
     function handleOnChangeEvent(event : ChangeEvent<HTMLInputElement | HTMLTextAreaElement>){
@@ -34,6 +47,7 @@ export default observer (function ActivityForm(){
         console.log(event);
     }
 
+    if(loading) return <LoadingComponenet content="Loading activity..."></LoadingComponenet>
 
     return(   
         <Segment clearing>              
@@ -46,7 +60,7 @@ export default observer (function ActivityForm(){
                 <Form.Input placeholder='Venue' value={activity.venue} name="venue" onChange={handleOnChangeEvent}></Form.Input>
 
                 <Button floated='right' loading={submitting} positive type='submit' content='Submit'></Button>
-                <Button floated='right' onClick={closeForm} type='button' content='Cancel'></Button>
+                <Button floated='right' type='button' content='Cancel' as={NavLink} to='/activities'></Button>
             </Form>
         </Segment>
     )
