@@ -69,10 +69,10 @@ export default observer(function ActivityForm() {
     return (
         <Segment clearing>
             <Header content="Activity Details" sub color="teal" />
-            <Formik validationSchema={ValidationSchema} 
-                enableReinitialize initialValues={activity} 
+            <Formik validationSchema={ValidationSchema}
+                enableReinitialize initialValues={activity}
                 onSubmit={values => handleFormSubmit(values)}>
-                {({handleSubmit, isValid, isSubmitting, dirty}) => (
+                {({ handleSubmit, isValid, isSubmitting, dirty }) => (
                     <Form className="ui form" onSubmit={handleSubmit} autoComplete="Off">
                         <MyTextInput placeholder='Title' name="title"></MyTextInput>
                         <MyTextArea rows={11} name="description" placeholder="description" ></MyTextArea>
@@ -90,11 +90,11 @@ export default observer(function ActivityForm() {
                         <MyTextInput placeholder='Venue' name="venue"></MyTextInput>
 
                         <Button disabled={isSubmitting || !dirty || !isValid}
-                            floated='right' loading={submitting} 
-                            positive type='submit' 
+                            floated='right' loading={submitting}
+                            positive type='submit'
                             content='Submit'>
 
-                            </Button>
+                        </Button>
                         <Button floated='right' type='button' content='Cancel' as={NavLink} to='/activities'></Button>
                     </Form>
                 )}

@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/2473adbf-a9a1-4803-b0bf-5d09b01d74d1/resourceGroups/appsvc_windows_centralus/providers/Microsoft.Web/sites/reactactivities",
+    "appService.deploySubpath": "client-app/build"
+}

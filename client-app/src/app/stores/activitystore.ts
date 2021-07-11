@@ -82,7 +82,6 @@ export default class ActivityStore {
     loadActivity = async (id:string) => {
         try {
             let activity = this.getActivity(id);
-            console.log(activity)
             if (activity) {
                 this.setSelectedActivity(activity);
                 return activity;
