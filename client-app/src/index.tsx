@@ -2,17 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'semantic-ui-css/semantic.min.css';
 import 'react-calendar/dist/Calendar.css';
+import 'react-toastify/dist/ReactToastify.min.css';
 import './app/layout/styles.css';
 import App from './app/layout/App';
 import reportWebVitals from './reportWebVitals';
 import { store, storeContext } from './app/stores/store';
-import { BrowserRouter } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import { Router } from 'react-router-dom';
+
+//this is for the error handling at agent.ts. Since agent.ts is not react component (it is ts), 
+//react history object is not accessible
+export const history = createBrowserHistory();
 
 ReactDOM.render(
   <storeContext.Provider value={store}>
-    <BrowserRouter>
+    <Router history={history}>
       <App />
-    </BrowserRouter>
+    </Router>
   </storeContext.Provider>
   ,
   document.getElementById('root')
