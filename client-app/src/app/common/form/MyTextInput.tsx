@@ -7,7 +7,9 @@ import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 export interface Props{
     placeholder : string;
     name: string;
+    type?: string;
     label?: string;
+    color?:string;
 }
 
 export default function MyTextInput(props:Props) {
@@ -16,7 +18,7 @@ export default function MyTextInput(props:Props) {
     return(
         <Form.Field error={meta.touched && !!meta.error}>
             <label>{props.label}</label>
-            <input {...field} {...props} />
+            <input {...field} {...props}  />
             {meta.touched && meta.error ? (
                 <Label basic color="red">{meta.error}</Label>
             ):null}

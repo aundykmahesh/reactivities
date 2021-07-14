@@ -40,6 +40,7 @@ export default class ActivityStore {
     setSubmittingStatus = (status: boolean) => {
         this.submitting = status;
     }
+    
 
 
     setEditMode = (mode: boolean) => { this.editMode = mode; }

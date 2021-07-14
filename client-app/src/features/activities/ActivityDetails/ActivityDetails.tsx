@@ -22,7 +22,7 @@ export default observer (function ActivityDetails () {
         }
     }, [id,loadActivity]);
     ///this is just to handle case of null, loading component does nothing
-    if(loading || !activity) return <LoadingComponenet />;
+    if(loading || !activity) return <LoadingComponenet content='loading activities...'/>;
     
     return (
         <Grid>
